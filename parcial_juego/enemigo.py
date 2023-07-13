@@ -138,12 +138,12 @@ class Boss():
     def __init__(self,x,y,frame_rate_ms,p_scale=1) -> None:
         self.stay_r = Auxiliar.getSurfaceFromSeparateFiles("parcial_juego/images/caracters/enemies/summoner_skeleton_boss/IDLE/IDLE_00{0}.png",0,15,scale=p_scale)
         self.attack_r = Auxiliar.getSurfaceFromSeparateFiles("parcial_juego/images/caracters/enemies/summoner_skeleton_boss/ATTACK/ATTACK_00{0}.png",0,8,scale=p_scale)
-        self.die_r = Auxiliar.getSurfaceFromSeparateFiles("parcial_juego/images/caracters/enemies/summoner_skeleton_boss/DIE/DIE_00{0}.png",0,0,scale=p_scale,repeat_frame=2)
+        self.die_r = Auxiliar.getSurfaceFromSeparateFiles("parcial_juego/images/caracters/enemies/summoner_skeleton_boss/DIE/DIE_00{0}.png",0,3,scale=p_scale,repeat_frame=2)
         self.summon_r = Auxiliar.getSurfaceFromSeparateFiles("parcial_juego/images/caracters/enemies/summoner_skeleton_boss/SUMMON/SUMMON_00{0}.png",0,10,scale=p_scale)
 
 
         self.frame = 0
-        self.lives = 1
+        self.lives = 5
         self.animation = self.stay_r
         self.direction = DIRECTION_R
         self.image = self.animation[self.frame]
@@ -168,6 +168,8 @@ class Boss():
         player.score += 1000
         print(player.score)
 
+    def reiniciar_boss(self):
+        self.lives = 5
 
     def do_animation(self,delta_ms):
         self.tiempo_transcurrido_animation += delta_ms

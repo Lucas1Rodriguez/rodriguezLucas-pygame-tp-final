@@ -30,7 +30,7 @@ class FormGameLevel3(Form):
 
         self.enemy_list = []
         self.enemy_list.append (Enemy(x=600,y=650,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
-        self.boss = (Boss(x=500,y=150,frame_rate_ms=150,p_scale=0.1))
+        self.boss = (Boss(x=300,y=150,frame_rate_ms=150,p_scale=0.1))
 
 
         self.plataform_list = []
@@ -59,79 +59,105 @@ class FormGameLevel3(Form):
         self.plataform_list.append(Plataform(x=950,y=GROUND_LEVEL,width=50,height=50,type=19))
 
 
-        self.plataform_list.append(Plataform(x=1000,y=GROUND_LEVEL,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=1050,y=GROUND_LEVEL,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=1100,y=GROUND_LEVEL,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=1000,y=700,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=1050,y=700,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=1000,y=650,width=50,height=50,type=17))
+        self.plataform_list.append(Plataform(x=1000,y=GROUND_LEVEL,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=1050,y=GROUND_LEVEL,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=1100,y=GROUND_LEVEL,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=1000,y=700,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=1050,y=700,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=1000,y=650,width=50,height=50,type=25))
 
-        self.plataform_list.append(Plataform(x=700,y=GROUND_LEVEL,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=750,y=GROUND_LEVEL,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=800,y=GROUND_LEVEL,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=750,y=700,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=800,y=700,width=50,height=50,type=17))
-        self.plataform_list.append(Plataform(x=800,y=650,width=50,height=50,type=17))
+        self.plataform_list.append(Plataform(x=700,y=GROUND_LEVEL,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=750,y=GROUND_LEVEL,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=800,y=GROUND_LEVEL,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=750,y=700,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=800,y=700,width=50,height=50,type=25))
+        self.plataform_list.append(Plataform(x=800,y=650,width=50,height=50,type=25))
 
-        # self.plataform_list.append(Plataform(x=1000,y=250,width=50,height=50,type=17))
-        # self.plataform_list.append(Plataform(x=1000,y=200,width=50,height=50,type=17))
-        # self.plataform_list.append(Plataform(x=1000,y=150,width=50,height=50,type=17))
-        # self.plataform_list.append(Plataform(x=1000,y=100,width=50,height=50,type=17))
-
-
+       
 
         self.bullet_list = []
 
-        self.exit = (Exit(x=-60,y=100,width=280,height=240,type=24))
+        self.exit = (Exit(x=20,y=200,width=200,height=150,type=26))
 
         self.ladder = Ladder(x=1500,y=245,width=200,height=540,type=16)
 
 
         self.loot_list = []
-        self.loot_list.append(Botin(x=1150,y=450,width=40,height=40,type=15))
-        self.loot_list.append(Botin(x=1750,y=50,width=40,height=40,type=15))
+        self.loot_list.append(Botin(x=1750,y=650,width=40,height=40,type=15))
+        self.loot_list.append(Botin(x=350,y=650,width=40,height=40,type=20))
 
         self.lever = Lever(x=260,y=670,width=50,height=50,type=17)
 
-        self.door = Door(x=1000,y=100,width=150,height=250,type=18)
+        self.door = Door(x=1000,y=145,width=150,height=205,type=18)
 
-        self.bullet_list = []
+        self.cronometro = 60
 
-        self.timer_3s = pygame.USEREVENT +1
+        self.timer_1s = pygame.USEREVENT +1
+        pygame.time.set_timer(self.timer_1s,1000)
+
+        self.timer_3s = pygame.USEREVENT +2
         pygame.time.set_timer(self.timer_3s,3000)
 
-        self.timer_10s = pygame.USEREVENT +2
+        self.timer_10s = pygame.USEREVENT +3
         pygame.time.set_timer(self.timer_10s,10000)
+
+        self.player_1.leer_archivo()
 
     def on_click_boton1(self, parametro):
         self.set_active(parametro)
     
-    def line_of_sight(self, platform_list,enemy):
-        has_vision = True
-        for platform in platform_list:
-            if platform.rect.collidepoint(enemy.rect.center):
-                has_vision = False
-                break
-
-        return has_vision
-
     def shot_enemy(self):
             for enemy_element in self.enemy_list:
-                if self.line_of_sight(self.plataform_list,enemy_element):
-                    if enemy_element.direction == DIRECTION_L:
-                        sentido = -1
-                    else:
-                        sentido = 1
+                if enemy_element.direction == DIRECTION_L:
+                    sentido = -1
+                else:
+                    sentido = 1
+
+
+            if len(self.enemy_list) > 0:
+                line_rect = pygame.Rect(enemy_element.rect.centerx, enemy_element.rect.centery, self.player_1.rect.centerx - enemy_element.rect.centerx, self.player_1.rect.centery - enemy_element.rect.centery)
+            
+                if not any(line_rect.colliderect(platform.rect) for platform in self.plataform_list):
 
                     if (enemy_element.direction == DIRECTION_L and self.player_1.direction == DIRECTION_R) or (enemy_element.direction == DIRECTION_R and self.player_1.direction == DIRECTION_L):
-
-                        self.bullet_list.append(Bullet(enemy_element,enemy_element.rect.centerx,enemy_element.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,sentido,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
+                            self.bullet_list.append(Bullet(enemy_element,enemy_element.rect.centerx,enemy_element.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,sentido,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
+            if self.boss.lives > 0:
+    
+                line_rect_boss = pygame.Rect(self.boss.rect.centerx, self.boss.rect.centery, self.player_1.rect.centerx - self.boss.rect.centerx, self.player_1.rect.centery - self.boss.rect.centery)
+                
+                if not any(line_rect_boss.colliderect(platform.rect) for platform in self.plataform_list) and not line_rect_boss.colliderect(self.door.rect):
+                    self.bullet_list.append(Bullet(self.boss,self.boss.rect.centerx,self.boss.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,1,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
+           
+            if DEBUG:
+                pygame.draw.line(self.surface, C_BLUE, (enemy_element.rect.centerx, enemy_element.rect.centery), (self.player_1.rect.centerx, self.player_1.rect.centery))
 
     def summon(self):
 
-        self.boss.animation = self.boss.summon_r
-        self.enemy_list.append(Enemy(x=700,y=150,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
-        self.enemy_list.append(Enemy(x=750,y=150,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
+        line_rect_boss = pygame.Rect(self.boss.rect.centerx, self.boss.rect.centery, self.player_1.rect.centerx - self.boss.rect.centerx, self.player_1.rect.centery - self.boss.rect.centery)
+
+        if not any(line_rect_boss.colliderect(platform.rect) for platform in self.plataform_list) and not line_rect_boss.colliderect(self.door.rect):
+
+            self.enemy_list.append(Enemy(x=550,y=150,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
+
+    def reiniciar_nivel_l3(self):
+
+        self.cronometro = 60
+
+        self.player_1 = Player(x=1650,y=150,speed_walk=8,speed_run=12,gravity=14,jump_power=80,frame_rate_ms=100,move_rate_ms=50,jump_height=180,p_scale=0.15,interval_time_jump=300,interval_time_shot=2000)
+        self.player_1.reiniciar_player()
+
+        self.enemy_list = []
+        self.enemy_list.append (Enemy(x=600,y=650,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
+
+        self.loot_list = []
+        self.loot_list.append(Botin(x=1750,y=650,width=40,height=40,type=15))
+        self.loot_list.append(Botin(x=350,y=650,width=40,height=40,type=20))
+
+        self.boss = (Boss(x=300,y=150,frame_rate_ms=150,p_scale=0.1))
+        self.boss.reiniciar_boss()
+
+        self.lever.is_active = False
+        self.door.is_open = False
 
 
     def update(self, lista_eventos,keys,delta_ms):
@@ -149,24 +175,31 @@ class FormGameLevel3(Form):
                 enemy_element.update(delta_ms,self.plataform_list,self.enemy_list)
 
         for evento in lista_eventos:
+            if evento.type == self.timer_1s:
+                self.cronometro -= 1
+
             if evento.type == self.timer_3s:
                 self.shot_enemy()
+
+            if evento.type == self.timer_10s:
+                self.summon()
+
+        if len(self.loot_list) > 0:
+            for loot_element in self.loot_list:
+                loot_element.score(self.player_1,self.loot_list)
 
         if(self.lever.is_active):
             self.door.open_door()
         
-        self.boss.update(delta_ms)
+        self.boss.update(delta_ms)        
 
-        # for evento in lista_eventos:
-        #     if evento.type == self.timer_10s:
-        #         self.summon()
-        
-
-        self.player_1.events(delta_ms,keys)
-        self.player_1.update(delta_ms,self.plataform_list,self.enemy_list)
+        self.player_1.events(delta_ms,keys,self.ladder,self.lever)
+        self.player_1.update(delta_ms,self.plataform_list,self.enemy_list,self.door,self.boss)
 
         self.pb_lives.value = self.player_1.lives 
 
+        if self.cronometro == 0 or self.player_1.lives == 0:
+            self.reiniciar_nivel_l3()
 
     def draw(self): 
         super().draw()
@@ -188,6 +221,10 @@ class FormGameLevel3(Form):
         
         for bullet_element in self.player_1.bullet_list:
             bullet_element.draw(self.surface)
+
+        if len(self.loot_list) > 0:
+            for loot_element in self.loot_list:
+                loot_element.draw(self.surface)
 
         self.boss.draw(self.surface)
 

@@ -1,4 +1,5 @@
 import pygame
+import json
 from pygame.locals import *
 from constantes import *
 from gui_form import Form
@@ -67,8 +68,17 @@ class FormGameLevel1(Form):
 
         self.bullet_list = []
 
-        self.timer_3s = pygame.USEREVENT +1
+        self.cronometro = 60
+
+        self.timer_1s = pygame.USEREVENT +1
+        pygame.time.set_timer(self.timer_1s,1000)
+
+        self.timer_3s = pygame.USEREVENT +2
         pygame.time.set_timer(self.timer_3s,3000)
+
+
+
+        self.player_1.crear_json()
 
     def on_click_boton1(self, parametro):
         self.set_active(parametro)
@@ -80,11 +90,35 @@ class FormGameLevel1(Form):
             else:
                 sentido = 1
 
-            if (enemy_element.direction == DIRECTION_L and self.player_1.direction == DIRECTION_R) or (enemy_element.direction == DIRECTION_R and self.player_1.direction == DIRECTION_L):
+            line_rect = pygame.Rect(enemy_element.rect.centerx, enemy_element.rect.centery, self.player_1.rect.centerx - enemy_element.rect.centerx, self.player_1.rect.centery - enemy_element.rect.centery)
 
-                self.bullet_list.append(Bullet(enemy_element,enemy_element.rect.centerx,enemy_element.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,sentido,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
+            if DEBUG:
+                pygame.draw.line(self.surface, C_BLUE, (enemy_element.rect.centerx, enemy_element.rect.centery), (self.player_1.rect.centerx, self.player_1.rect.centery))
+
+            if not any(line_rect.colliderect(platform.rect) for platform in self.plataform_list):
+
+                if (enemy_element.direction == DIRECTION_L and self.player_1.direction == DIRECTION_R) or (enemy_element.direction == DIRECTION_R and self.player_1.direction == DIRECTION_L):
+                
+                    self.bullet_list.append(Bullet(enemy_element,enemy_element.rect.centerx,enemy_element.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,sentido,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
+
+    def reiniciar_nivel_l1(self):
+
+        self.cronometro = 60
+
+        self.player_1 = Player(x=0,y=650,speed_walk=8,speed_run=12,gravity=14,jump_power=80,frame_rate_ms=100,move_rate_ms=50,jump_height=180,p_scale=0.15,interval_time_jump=300,interval_time_shot=2000)
+        self.player_1.reiniciar_player()
+
+        self.enemy_list = []
+        self.enemy_list.append (Enemy(x=900,y=150,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
+        self.enemy_list.append (Enemy(x=900,y=650,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
+        self.enemy_list.append (Enemy(x=1600,y=650,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
+
+        self.loot_list = []
+        self.loot_list.append(Botin(x=1150,y=450,width=40,height=40,type=15))
+        self.loot_list.append(Botin(x=1750,y=50,width=40,height=40,type=15))
 
     def update(self, lista_eventos,keys,delta_ms):
+
         for aux_widget in self.widget_list:
             aux_widget.update(lista_eventos)
 
@@ -99,8 +133,12 @@ class FormGameLevel1(Form):
                 enemy_element.update(delta_ms,self.plataform_list,self.enemy_list)
 
         for evento in lista_eventos:
+            if evento.type == self.timer_1s:
+                self.cronometro -= 1
+                    
             if evento.type == self.timer_3s:
                 self.shot_enemy()
+
 
         if len(self.loot_list) > 0:
             for loot_element in self.loot_list:
@@ -110,8 +148,14 @@ class FormGameLevel1(Form):
         self.player_1.events(delta_ms,keys)
         self.player_1.update(delta_ms,self.plataform_list,self.enemy_list)
 
-        self.pb_lives.value = self.player_1.lives 
+        self.pb_lives.value = self.player_1.lives
 
+        if self.cronometro == 0 or self.player_1.lives == 0:
+            self.reiniciar_nivel_l1()
+
+        if(self.player_1.collition_rect.colliderect(self.exit.collition_rect)):
+            self.set_active("form_game_L2")
+            self.player_1.guardar_archivo()
 
     def draw(self): 
         super().draw()

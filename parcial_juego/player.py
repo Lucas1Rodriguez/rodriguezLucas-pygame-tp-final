@@ -1,4 +1,5 @@
 import pygame
+import json
 from constantes import *
 from auxiliar import Auxiliar
 from bullet import Bullet
@@ -60,6 +61,10 @@ class Player:
         self.interval_time_shot = interval_time_shot
         self.first_shot = True
         self.bullet_list = []
+
+        self.x_inicial = x
+        self.y_inicial = y
+
 
     def move(self,direction,speed,animation):
         if(self.is_jump == False and self.is_fall == False):
@@ -148,7 +153,7 @@ class Player:
         self.head_collition_rect.y += delta_y
 
 
-    def do_movement(self,delta_ms,plataform_list,enemy_list):
+    def do_movement(self,delta_ms,plataform_list,enemy_list,door,boss):
         self.tiempo_transcurrido_move += delta_ms
         if(self.tiempo_transcurrido_move >= self.move_rate_ms):
             self.tiempo_transcurrido_move = 0
@@ -170,7 +175,10 @@ class Player:
         
             self.collide_enemy(enemy_list)
             self.collide_traps(plataform_list)
-                    
+            if door is not None and boss is not None:
+                self.collide_door(door)
+                self.collide_boss(boss)
+                        
     def is_on_plataform(self,plataform_list):
         retorno = False
         
@@ -191,8 +199,18 @@ class Player:
     def collide_traps(self,platform_list):
         for plataforma in platform_list:
             if plataforma.type == 18 or plataforma.type == 19 or plataforma.type == 20:
-                if self.ground_collition_rect.colliderect(plataforma.ground_collition_rect) or self.head_collition_rect.colliderect(plataforma.head_collition_rect):
+                if self.ground_collition_rect.colliderect(plataforma.ground_collition_rect):
                     self.damage()
+    
+    def collide_door(self,door):
+            if self.collition_rect.colliderect(door.collition_rect) and door.is_open == False:
+                self.rect.x = 1075
+                self.collition_rect.x = 1100
+                self.ground_collition_rect.x = 1100
+                self.head_collition_rect.x = 1100
+    def collide_boss(self,boss):
+            if self.collition_rect.colliderect(boss.collition_rect):
+                self.damage()
     
 
     def die(self):
@@ -201,6 +219,51 @@ class Player:
         else:
             self.animation = self.die_l
         self.is_dying = True
+
+    def climb_ladder(self,ladder,platform_list):
+
+        if self.collition_rect.colliderect(ladder.rect) and not self.is_on_plataform(platform_list):
+            print("If subir")
+            self.move_y -= 1
+        if self.collition_rect.colliderect(ladder.rect) and self.rect.y > GROUND_LEVEL:
+            print("If Bajar")
+            self.move_y += 1
+        else:
+            print("No me muevo")
+            self.move_y = 0
+
+    def reiniciar_player(self):
+        self.lives = 3
+        self.score = 0
+        # self.x = self.x_inicial
+        # self.y= self.y_inicial
+
+
+    def crear_json(self):
+        datos = {
+            "lives": 3,
+            "score": 0
+        }
+
+        with open("C:/Users/USURIO/OneDrive/Documentos/Programacion_I/parcial_juego/player.json", 'w+') as archivo: 
+            json.dump(datos, archivo)
+
+    def leer_archivo(self) ->list:
+
+        with open("C:/Users/USURIO/OneDrive/Documentos/Programacion_I/parcial_juego/player.json", "r") as archivo:
+            dict = json.load(archivo)
+            self.lives = dict["lives"]
+            self.score = dict["score"]
+            print(self.lives)
+            print(self.score)
+
+
+    def guardar_archivo(self:str):
+        
+        datos = {'lives': self.lives, 'score': self.score}
+        with open("C:/Users/USURIO/OneDrive/Documentos/Programacion_I/parcial_juego/player.json", 'w+') as archivo:
+                json.dump(datos, archivo)
+
 
 
     def do_animation(self,delta_ms):
@@ -211,11 +274,12 @@ class Player:
                 self.frame += 1
             else: 
                 self.frame = 0
- 
-    def update(self,delta_ms,plataform_list,enemy_list):
-        self.do_movement(delta_ms,plataform_list,enemy_list)
+
+
+    def update(self,delta_ms,plataform_list,enemy_list,door=None,boss=None):
+        self.do_movement(delta_ms,plataform_list,enemy_list,door,boss)
         self.do_animation(delta_ms)
-        
+    
     
     def draw(self,screen):
         
@@ -228,7 +292,7 @@ class Player:
         screen.blit(self.image,self.rect)
         
 
-    def events(self,delta_ms,keys):
+    def events(self,delta_ms,keys,ladder=None,lever=None):
         self.tiempo_transcurrido += delta_ms
 
         if self.rect.x >= 0 and self.rect.x <= 1750:          
@@ -266,12 +330,21 @@ class Player:
         else:
             self.shoot(False)
 
-    
-        # if(keys[pygame.K_UP] and not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE] and not keys[pygame.K_DOWN]):
-        #     if(self.collition_rect.colliderect(Ladder.rect)):
-        #         self.move_y -= 10
-        #         self.change_y(self.move_y) 
-        # elif(keys[pygame.K_DOWN] and not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE] and not keys[pygame.K_UP]):
-        #     if(self.collition_rect.colliderect(Ladder)):
-        #         self.move_y += 10
-        #         self.change_y(self.move_y)
+        if(keys[pygame.K_e]):
+            if self.collition_rect.colliderect(lever.collition_rect):
+                lever.activate_lever()
+
+        if(keys[pygame.K_UP] and not keys[pygame.K_DOWN]):
+            # self.climb_ladder(ladder,plataform_list)
+            if self.collition_rect.colliderect(ladder.collition_rect):
+                self.move_y -= 1
+            else:
+                self.move_y = 0
+            
+        elif(keys[pygame.K_DOWN] and not keys[pygame.K_UP]):
+            # self.climb_ladder(ladder,plataform_list)
+            if self.collition_rect.colliderect(ladder.collition_rect):
+                self.move_y += 1
+            else:
+                self.move_y = 0
+        
