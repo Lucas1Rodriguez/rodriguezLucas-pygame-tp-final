@@ -156,6 +156,8 @@ class Boss():
         self.frame_rate_ms = frame_rate_ms 
         self.tiempo_transcurrido_move = 0
     
+        self.is_dying = False
+
     def receive_shoot(self,player):
         print(player)
         self.lives -= 1
@@ -166,6 +168,7 @@ class Boss():
         if(self.direction == DIRECTION_R):
             self.animation = self.die_r
         player.score += 1000
+        self.is_dying = True
         print(player.score)
 
     def reiniciar_boss(self):
@@ -180,8 +183,13 @@ class Boss():
             else: 
                 self.frame = 0
 
-    def update(self,delta_ms):
-        self.do_animation(delta_ms)
+    def update(self,delta_ms,boss_list):
+        if self.is_dying:
+            self.do_animation(delta_ms)
+            if self.frame == len(self.animation) - 1:
+                boss_list.remove(self)
+        else:
+            self.do_animation(delta_ms)
 
     def draw(self,screen):
         if(DEBUG):

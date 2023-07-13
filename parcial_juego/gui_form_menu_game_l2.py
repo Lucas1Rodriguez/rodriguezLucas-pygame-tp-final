@@ -156,7 +156,7 @@ class FormGameLevel2(Form):
 
         self.pb_lives.value = self.player_1.lives 
 
-        if self.cronometro == 0 or self.player_1.lives:
+        if self.cronometro == 0 or self.player_1.lives == 0:
             self.reiniciar_nivel_l2()
 
         if(self.player_1.collition_rect.colliderect(self.exit.collition_rect)):

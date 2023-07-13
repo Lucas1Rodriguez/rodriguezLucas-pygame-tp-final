@@ -208,7 +208,8 @@ class Player:
                 self.collition_rect.x = 1100
                 self.ground_collition_rect.x = 1100
                 self.head_collition_rect.x = 1100
-    def collide_boss(self,boss):
+    def collide_boss(self,boss_list):
+        for boss in boss_list:
             if self.collition_rect.colliderect(boss.collition_rect):
                 self.damage()
     

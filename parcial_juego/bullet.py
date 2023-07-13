@@ -37,13 +37,13 @@ class Bullet():
         self.y = self.y + delta_y
         self.rect.y = int(self.y)
 
-    def do_movement(self,delta_ms,plataform_list,enemy_list,player,door,boss):
+    def do_movement(self,delta_ms,plataform_list,enemy_list,player,door,boss_list):
         self.tiempo_transcurrido_move += delta_ms
         if(self.tiempo_transcurrido_move >= self.move_rate_ms):
             self.tiempo_transcurrido_move = 0
             self.change_x(self.move_x)
             self.change_y(self.move_y)
-            self.check_impact(plataform_list,enemy_list,player,door,boss)
+            self.check_impact(plataform_list,enemy_list,player,door,boss_list)
 
     def do_animation(self,delta_ms):
         self.tiempo_transcurrido_animation += delta_ms
@@ -51,7 +51,7 @@ class Bullet():
             self.tiempo_transcurrido_animation = 0
             pass
     
-    def check_impact(self,plataform_list,enemy_list,player,door,boss):
+    def check_impact(self,plataform_list,enemy_list,player,door,boss_list):
         if(self.is_active and self.owner != player and self.rect.colliderect(player.rect)):
             print("IMPACTO PLAYER")
             player.damage()
@@ -62,11 +62,12 @@ class Bullet():
                     if(type(self.owner) == type(player)):
                         aux_enemy.receive_shoot(player)
                     self.is_active = False
-        if boss is not None:
-            if(self.is_active and self.owner != boss and self.rect.colliderect(boss.rect)):
-                print("IMPACTO BOSS")
-                boss.receive_shoot(player)
-                self.is_active = False
+        if boss_list is not None:
+            for boss in boss_list:
+                if(self.is_active and self.owner != boss and self.rect.colliderect(boss.rect)):
+                    print("IMPACTO BOSS")
+                    boss.receive_shoot(player)
+                    self.is_active = False
         for aux_platform in plataform_list:
             if(self.is_active and self.rect.colliderect(aux_platform.rect)):
                 print("IMPACTO PLATFORM")
@@ -77,8 +78,8 @@ class Bullet():
                 self.is_active = False
 
 
-    def update(self,delta_ms,plataform_list,enemy_list,player,door=None,boss=None):
-        self.do_movement(delta_ms,plataform_list,enemy_list,player,door,boss)
+    def update(self,delta_ms,plataform_list,enemy_list,player,door=None,boss_list=None):
+        self.do_movement(delta_ms,plataform_list,enemy_list,player,door,boss_list)
         
         self.do_animation(delta_ms) 
 

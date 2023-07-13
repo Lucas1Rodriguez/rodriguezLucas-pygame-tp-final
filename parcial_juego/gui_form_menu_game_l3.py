@@ -30,7 +30,8 @@ class FormGameLevel3(Form):
 
         self.enemy_list = []
         self.enemy_list.append (Enemy(x=600,y=650,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
-        self.boss = (Boss(x=300,y=150,frame_rate_ms=150,p_scale=0.1))
+        self.boss_list = []
+        self.boss_list.append(Boss(x=300,y=150,frame_rate_ms=150,p_scale=0.1))
 
 
         self.plataform_list = []
@@ -117,27 +118,31 @@ class FormGameLevel3(Form):
             if len(self.enemy_list) > 0:
                 line_rect = pygame.Rect(enemy_element.rect.centerx, enemy_element.rect.centery, self.player_1.rect.centerx - enemy_element.rect.centerx, self.player_1.rect.centery - enemy_element.rect.centery)
             
-                if not any(line_rect.colliderect(platform.rect) for platform in self.plataform_list):
+                if not any(line_rect.colliderect(platform.rect) for platform in self.plataform_list) and not enemy_element.is_dying == True:
 
                     if (enemy_element.direction == DIRECTION_L and self.player_1.direction == DIRECTION_R) or (enemy_element.direction == DIRECTION_R and self.player_1.direction == DIRECTION_L):
                             self.bullet_list.append(Bullet(enemy_element,enemy_element.rect.centerx,enemy_element.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,sentido,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
-            if self.boss.lives > 0:
-    
-                line_rect_boss = pygame.Rect(self.boss.rect.centerx, self.boss.rect.centery, self.player_1.rect.centerx - self.boss.rect.centerx, self.player_1.rect.centery - self.boss.rect.centery)
+            if len(self.boss_list) > 0:
+                for boss in self.boss_list:
+                    if boss.lives > 0:
+            
+                        line_rect_boss = pygame.Rect(boss.rect.centerx, boss.rect.centery, self.player_1.rect.centerx - boss.rect.centerx, self.player_1.rect.centery - boss.rect.centery)
+                        
+                        if not any(line_rect_boss.colliderect(platform.rect) for platform in self.plataform_list) and not line_rect_boss.colliderect(self.door.rect) and not boss.is_dying == True:
+                            self.bullet_list.append(Bullet(boss,boss.rect.centerx,boss.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,1,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
                 
-                if not any(line_rect_boss.colliderect(platform.rect) for platform in self.plataform_list) and not line_rect_boss.colliderect(self.door.rect):
-                    self.bullet_list.append(Bullet(self.boss,self.boss.rect.centerx,self.boss.rect.centery,self.player_1.rect.centerx,self.player_1.rect.centery,1,20,path="parcial_juego/images/tileset/forest/Objects/15.png",frame_rate_ms=100,move_rate_ms=20,width=80,height=10))
-           
             if DEBUG:
                 pygame.draw.line(self.surface, C_BLUE, (enemy_element.rect.centerx, enemy_element.rect.centery), (self.player_1.rect.centerx, self.player_1.rect.centery))
 
     def summon(self):
 
-        line_rect_boss = pygame.Rect(self.boss.rect.centerx, self.boss.rect.centery, self.player_1.rect.centerx - self.boss.rect.centerx, self.player_1.rect.centery - self.boss.rect.centery)
+        if len(self.boss_list) > 0:
+            for boss in self.boss_list:
+                line_rect_boss = pygame.Rect(boss.rect.centerx, boss.rect.centery, self.player_1.rect.centerx - boss.rect.centerx, self.player_1.rect.centery - boss.rect.centery)
 
-        if not any(line_rect_boss.colliderect(platform.rect) for platform in self.plataform_list) and not line_rect_boss.colliderect(self.door.rect):
+                if not any(line_rect_boss.colliderect(platform.rect) for platform in self.plataform_list) and not line_rect_boss.colliderect(self.door.rect) and not boss.is_dying == True:
 
-            self.enemy_list.append(Enemy(x=550,y=150,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
+                    self.enemy_list.append(Enemy(x=550,y=150,speed_walk=6,gravity=14,frame_rate_ms=150,move_rate_ms=50,p_scale=0.1))
 
     def reiniciar_nivel_l3(self):
 
@@ -153,8 +158,10 @@ class FormGameLevel3(Form):
         self.loot_list.append(Botin(x=1750,y=650,width=40,height=40,type=15))
         self.loot_list.append(Botin(x=350,y=650,width=40,height=40,type=20))
 
-        self.boss = (Boss(x=300,y=150,frame_rate_ms=150,p_scale=0.1))
-        self.boss.reiniciar_boss()
+        self.boss_list = []
+        self.boss_list.append(Boss(x=300,y=150,frame_rate_ms=150,p_scale=0.1))
+        for boss in self.boss_list:
+            boss.reiniciar_boss()
 
         self.lever.is_active = False
         self.door.is_open = False
@@ -165,10 +172,10 @@ class FormGameLevel3(Form):
             aux_widget.update(lista_eventos)
 
         for bullet_element in self.bullet_list:
-            bullet_element.update(delta_ms,self.plataform_list,self.enemy_list,self.player_1,self.door,self.boss)
+            bullet_element.update(delta_ms,self.plataform_list,self.enemy_list,self.player_1,self.door,self.boss_list)
         
         for bullet_element in self.player_1.bullet_list:
-            bullet_element.update(delta_ms,self.plataform_list,self.enemy_list,self.player_1,self.door,self.boss)
+            bullet_element.update(delta_ms,self.plataform_list,self.enemy_list,self.player_1,self.door,self.boss_list)
 
         if len(self.enemy_list) > 0: 
             for enemy_element in self.enemy_list:
@@ -191,15 +198,21 @@ class FormGameLevel3(Form):
         if(self.lever.is_active):
             self.door.open_door()
         
-        self.boss.update(delta_ms)        
+        if len(self.boss_list) > 0:
+            for boss in self.boss_list:
+                boss.update(delta_ms,self.boss_list)        
 
         self.player_1.events(delta_ms,keys,self.ladder,self.lever)
-        self.player_1.update(delta_ms,self.plataform_list,self.enemy_list,self.door,self.boss)
+        self.player_1.update(delta_ms,self.plataform_list,self.enemy_list,self.door,self.boss_list)
 
         self.pb_lives.value = self.player_1.lives 
 
         if self.cronometro == 0 or self.player_1.lives == 0:
             self.reiniciar_nivel_l3()
+
+        if(self.player_1.collition_rect.colliderect(self.exit.collition_rect)):
+            self.set_active("form_menu_F")
+            self.player_1.guardar_archivo()
 
     def draw(self): 
         super().draw()
@@ -226,7 +239,9 @@ class FormGameLevel3(Form):
             for loot_element in self.loot_list:
                 loot_element.draw(self.surface)
 
-        self.boss.draw(self.surface)
+        if len(self.boss_list) > 0:
+            for boss in self.boss_list:
+                boss.draw(self.surface)
 
         self.exit.draw(self.surface)
 
