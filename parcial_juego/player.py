@@ -221,17 +221,6 @@ class Player:
             self.animation = self.die_l
         self.is_dying = True
 
-    def climb_ladder(self,ladder,platform_list):
-
-        if self.collition_rect.colliderect(ladder.rect) and not self.is_on_plataform(platform_list):
-            print("If subir")
-            self.move_y -= 1
-        if self.collition_rect.colliderect(ladder.rect) and self.rect.y > GROUND_LEVEL:
-            print("If Bajar")
-            self.move_y += 1
-        else:
-            print("No me muevo")
-            self.move_y = 0
 
     def reiniciar_player(self):
         self.lives = 3
@@ -331,21 +320,23 @@ class Player:
         else:
             self.shoot(False)
 
-        if(keys[pygame.K_e]):
-            if self.collition_rect.colliderect(lever.collition_rect):
-                lever.activate_lever()
 
-        if(keys[pygame.K_UP] and not keys[pygame.K_DOWN]):
-            # self.climb_ladder(ladder,plataform_list)
-            if self.collition_rect.colliderect(ladder.collition_rect):
-                self.move_y -= 1
-            else:
-                self.move_y = 0
-            
-        elif(keys[pygame.K_DOWN] and not keys[pygame.K_UP]):
-            # self.climb_ladder(ladder,plataform_list)
-            if self.collition_rect.colliderect(ladder.collition_rect):
-                self.move_y += 1
-            else:
-                self.move_y = 0
+        if lever is not None:
+            if(keys[pygame.K_e]):
+                if self.collition_rect.colliderect(lever.collition_rect):
+                    lever.activate_lever()
+
+
+        if ladder is not None:
+            if(keys[pygame.K_UP] and not keys[pygame.K_DOWN]):
+                if self.collition_rect.colliderect(ladder.collition_rect):
+                    self.move_y -= 1
+                else:
+                    self.move_y = 0
+                
+            elif(keys[pygame.K_DOWN] and not keys[pygame.K_UP]):
+                if self.collition_rect.colliderect(ladder.collition_rect):
+                    self.move_y += 1
+                else:
+                    self.move_y = 0
         
